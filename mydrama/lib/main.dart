@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'data/dummy_dramas.dart';
 import 'screens/home_screen.dart';
 import 'screens/login_screen.dart';
+import 'screens/splash_screen.dart';
 
 void main() {
   runApp(const MyDramaApp());
@@ -19,6 +20,13 @@ class _MyDramaAppState extends State<MyDramaApp> {
   bool isAdmin = false;
   bool isLoggedIn = false;
 
+  /// Setelah logout, langsung ke login (bukan splash lagi).
+  bool _showSplash = true;
+
+  void _onExploreFromSplash() {
+    setState(() => _showSplash = false);
+  }
+
   void _handleLogin(bool adminMode) {
     setState(() {
       isAdmin = adminMode;
@@ -30,6 +38,7 @@ class _MyDramaAppState extends State<MyDramaApp> {
     setState(() {
       isLoggedIn = false;
       isAdmin = false;
+      _showSplash = false;
     });
   }
 
@@ -40,11 +49,8 @@ class _MyDramaAppState extends State<MyDramaApp> {
       title: 'MyDrama',
       theme: ThemeData(
         useMaterial3: true,
-        scaffoldBackgroundColor: const Color(0xFF052B3F),
-        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF10B8D5)),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(fontFamily: 'Arial'),
-        ),
+        scaffoldBackgroundColor: const Color(0xFF0F2D2E),
+        colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF005B6E)),
       ),
       home: isLoggedIn
           ? HomeScreen(
@@ -52,7 +58,9 @@ class _MyDramaAppState extends State<MyDramaApp> {
               initialData: initialDramas(),
               onLogout: _logout,
             )
-          : LoginScreen(onLogin: _handleLogin),
+          : _showSplash
+              ? SplashScreen(onExplore: _onExploreFromSplash)
+              : LoginScreen(onLogin: _handleLogin),
     );
   }
 }
